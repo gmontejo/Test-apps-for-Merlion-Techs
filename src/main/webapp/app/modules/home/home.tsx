@@ -95,6 +95,11 @@ export const Home = (props: IHomeProp) => {
       <Col md="3" className="pad">
         <span className="hipster rounded" />
       </Col>
+      <Row>
+        <div>
+          <h1>HOLAAAAA</h1>
+        </div>
+      </Row>
     </Row>
   );
 };
