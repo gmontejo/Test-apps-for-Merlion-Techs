@@ -1,0 +1,30 @@
+{
+  "name": "Sales",
+  "fields": [
+    {
+      "fieldName": "state",
+      "fieldType": "State",
+      "fieldValues": "IN_CHARGE,SHIPPED,DELIVERED"
+    }
+  ],
+  "relationships": [
+    {
+      "relationshipType": "many-to-one",
+      "otherEntityName": "product",
+      "otherEntityRelationshipName": "sales",
+      "relationshipName": "product",
+      "otherEntityField": "id"
+    }
+  ],
+  "changelogDate": "20200813145740",
+  "entityTableName": "sales",
+  "dto": "no",
+  "pagination": "no",
+  "service": "no",
+  "jpaMetamodelFiltering": false,
+  "fluentMethods": true,
+  "readOnly": false,
+  "embedded": false,
+  "clientRootFolder": "",
+  "applications": "*"
+}
