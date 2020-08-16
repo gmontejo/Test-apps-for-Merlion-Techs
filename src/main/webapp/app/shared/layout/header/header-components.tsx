@@ -9,7 +9,7 @@ import appConfig from 'app/config/constants';
 
 export const BrandIcon = props => (
   <div {...props} className="brand-icon">
-    <img src="content/images/logo-merliontechs.png" alt="Logo" />
+    <img src="content/images/logo-full-merliontechs.png" alt="Logo" />
   </div>
 );
 
