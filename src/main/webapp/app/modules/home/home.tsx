@@ -10,9 +10,20 @@ export type IHomeProp = StateProps;
 
 export const Home = (props: IHomeProp) => {
   const { account } = props;
-  const [stock, setStock] = useState<Array<object>>();
+  const [stock, setStock] = useState<Array<Bucket>>();
   const [token, setToken] = useState<string>('');
   const [doneLoading, setDondeLoading] = useState<boolean>(false);
+
+  interface Bucket {
+    id: number;
+    availableToSellQuantity: number;
+    inChargeQuantity: number;
+    brokenQuantity: number;
+    product: {
+      id: number;
+      name: string;
+    };
+  }
 
   useEffect(() => {
     let idToken: string = window.sessionStorage['jhi-authenticationToken'];
@@ -29,7 +40,7 @@ export const Home = (props: IHomeProp) => {
           Authorization: `Bearer ${idToken}`,
         },
       });
-      const data: Array<object> = await request.json();
+      const data: Array<Bucket> = await request.json();
       data.sort((a, b) => {
         return a.id - b.id;
       });
@@ -60,7 +71,7 @@ export const Home = (props: IHomeProp) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data: Array<object> = await request.json();
+    const data: Array<Bucket> = await request.json();
     data.sort((a, b) => {
       return a.id - b.id;
     });
@@ -88,7 +99,7 @@ export const Home = (props: IHomeProp) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data: Array<object> = await request.json();
+    const data: Array<Bucket> = await request.json();
     data.sort((a, b) => {
       return a.id - b.id;
     });
@@ -116,7 +127,7 @@ export const Home = (props: IHomeProp) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data: Array<object> = await request.json();
+    const data: Array<Bucket> = await request.json();
     data.sort((a, b) => {
       return a.id - b.id;
     });
@@ -144,7 +155,7 @@ export const Home = (props: IHomeProp) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data: Array<object> = await request.json();
+    const data: Array<Bucket> = await request.json();
     data.sort((a, b) => {
       return a.id - b.id;
     });
@@ -172,7 +183,7 @@ export const Home = (props: IHomeProp) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    const data: Array<object> = await request.json();
+    const data: Array<Bucket> = await request.json();
     data.sort((a, b) => {
       return a.id - b.id;
     });
