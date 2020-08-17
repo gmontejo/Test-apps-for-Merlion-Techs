@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Alert } from 'reactstrap';
 import { IRootState } from 'app/shared/reducers';
+
 import {
   Box,
   Container,
@@ -17,14 +18,13 @@ import {
   TableRow,
   Paper,
 } from '@material-ui/core';
-import LocalShippingIcon from '@material-ui/icons/LocalShipping';
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
   saleStateButton: {
-    color: '#fff7e3',
+    color: '#fff',
     backgroundColor: '#2a6a9e',
     borderRadius: '20px',
     borderStyle: 'none',
@@ -199,6 +199,7 @@ export function Home(props: IHomeProp): JSX.Element {
                 className={`${classes.saleStateButton} stateBtn`}
                 variant="outlined"
                 onClick={handleInChargeButton}
+                style={{ backgroundColor: '#a3c3db', boxShadow: '0 0 10px 2px #004f85' }}
               >
                 Encargado
               </Button>
@@ -228,7 +229,7 @@ export function Home(props: IHomeProp): JSX.Element {
                     <TableCell align="right">ID del Producto</TableCell>
                     <TableCell align="right">Producto</TableCell>
                     <TableCell align="right">
-                      <LocalShippingIcon />
+                      <i className="fas fa-shipping-fast"></i>
                     </TableCell>
                   </TableRow>
                 </TableHead>
