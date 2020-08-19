@@ -17,7 +17,8 @@ interface Sale {
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 400,
+    maxWidth: 900,
+    margin: 'auto',
   },
   landing: {
     background: 'linear-gradient(#2a6a9e 10%, #fff 95%)',
@@ -248,8 +249,8 @@ export function Home(props: IHomeProp): JSX.Element {
             </Button>
           </Box>
 
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
+          <TableContainer className={classes.table} component={Paper}>
+            <Table aria-label="simple table">
               <TableHead>
                 <TableRow>
                   <TableCell>Nro de Venta</TableCell>
