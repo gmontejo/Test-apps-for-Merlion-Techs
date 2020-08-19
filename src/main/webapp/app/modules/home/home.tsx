@@ -139,143 +139,159 @@ export const Home = (props: IHomeProp) => {
   };
 
   const handleSellProduct = async (bucket: Bucket) => {
-    const productBucket: Bucket = { ...bucket };
-    productBucket.availableToSellQuantity--;
-    productBucket.inChargeQuantity++;
+    if (bucket.availableToSellQuantity > 0) {
+      const productBucket: Bucket = { ...bucket };
+      productBucket.availableToSellQuantity--;
+      productBucket.inChargeQuantity++;
 
-    await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'PUT',
-      body: JSON.stringify(productBucket),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'PUT',
+        body: JSON.stringify(productBucket),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const request = await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data: Array<Bucket> = await request.json();
-    data.sort((a, b) => {
-      return a.id - b.id;
-    });
-    setStock(data);
+      const request = await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data: Array<Bucket> = await request.json();
+      data.sort((a, b) => {
+        return a.id - b.id;
+      });
+      setStock(data);
 
-    document.getElementById(`availableQuantity${bucket.id}`).style.color = 'red';
-    document.getElementById(`inChargeQuantity${bucket.id}`).style.color = '#17bf63';
-    setTimeout(() => {
-      document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
-      document.getElementById(`inChargeQuantity${bucket.id}`).style.color = 'black';
-    }, 250);
+      document.getElementById(`availableQuantity${bucket.id}`).style.color = 'red';
+      document.getElementById(`inChargeQuantity${bucket.id}`).style.color = '#17bf63';
+      setTimeout(() => {
+        document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
+        document.getElementById(`inChargeQuantity${bucket.id}`).style.color = 'black';
+      }, 250);
+    } else {
+      window.alert('No hay más stock de este producto. Reponer urgentemente!');
+    }
   };
 
   const handleBrokenProduct = async (bucket: Bucket) => {
-    const productBucket: Bucket = { ...bucket };
-    productBucket.availableToSellQuantity--;
-    productBucket.brokenQuantity++;
+    if (bucket.availableToSellQuantity > 0) {
+      const productBucket: Bucket = { ...bucket };
+      productBucket.availableToSellQuantity--;
+      productBucket.brokenQuantity++;
 
-    await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'PUT',
-      body: JSON.stringify(productBucket),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'PUT',
+        body: JSON.stringify(productBucket),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const request = await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data: Array<Bucket> = await request.json();
-    data.sort((a, b) => {
-      return a.id - b.id;
-    });
-    setStock(data);
+      const request = await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data: Array<Bucket> = await request.json();
+      data.sort((a, b) => {
+        return a.id - b.id;
+      });
+      setStock(data);
 
-    document.getElementById(`availableQuantity${bucket.id}`).style.color = 'red';
-    document.getElementById(`brokenQuantity${bucket.id}`).style.color = '#17bf63';
-    setTimeout(() => {
-      document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
-      document.getElementById(`brokenQuantity${bucket.id}`).style.color = 'black';
-    }, 250);
+      document.getElementById(`availableQuantity${bucket.id}`).style.color = 'red';
+      document.getElementById(`brokenQuantity${bucket.id}`).style.color = '#17bf63';
+      setTimeout(() => {
+        document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
+        document.getElementById(`brokenQuantity${bucket.id}`).style.color = 'black';
+      }, 250);
+    } else {
+      window.alert('No hay stock disponible a reparar. Reponer urgentemente!');
+    }
   };
 
   const handleRefundProduct = async (bucket: Bucket) => {
-    const productBucket: Bucket = { ...bucket };
-    productBucket.availableToSellQuantity++;
-    productBucket.inChargeQuantity--;
+    if (bucket.inChargeQuantity > 0) {
+      const productBucket: Bucket = { ...bucket };
+      productBucket.availableToSellQuantity++;
+      productBucket.inChargeQuantity--;
 
-    await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'PUT',
-      body: JSON.stringify(productBucket),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'PUT',
+        body: JSON.stringify(productBucket),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const request = await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data: Array<Bucket> = await request.json();
-    data.sort((a, b) => {
-      return a.id - b.id;
-    });
-    setStock(data);
+      const request = await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data: Array<Bucket> = await request.json();
+      data.sort((a, b) => {
+        return a.id - b.id;
+      });
+      setStock(data);
 
-    document.getElementById(`inChargeQuantity${bucket.id}`).style.color = 'red';
-    document.getElementById(`availableQuantity${bucket.id}`).style.color = '#17bf63';
-    setTimeout(() => {
-      document.getElementById(`inChargeQuantity${bucket.id}`).style.color = 'black';
-      document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
-    }, 250);
+      document.getElementById(`inChargeQuantity${bucket.id}`).style.color = 'red';
+      document.getElementById(`availableQuantity${bucket.id}`).style.color = '#17bf63';
+      setTimeout(() => {
+        document.getElementById(`inChargeQuantity${bucket.id}`).style.color = 'black';
+        document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
+      }, 250);
+    } else {
+      window.alert('No hay ventas para cancelar');
+    }
   };
 
   const handleRepairProduct = async (bucket: Bucket) => {
-    const productBucket: Bucket = { ...bucket };
-    productBucket.availableToSellQuantity++;
-    productBucket.brokenQuantity--;
+    if (bucket.brokenQuantity > 0) {
+      const productBucket: Bucket = { ...bucket };
+      productBucket.availableToSellQuantity++;
+      productBucket.brokenQuantity--;
 
-    await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'PUT',
-      body: JSON.stringify(productBucket),
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
+      await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'PUT',
+        body: JSON.stringify(productBucket),
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    const request = await fetch(`http://localhost:9000/api/product-buckets`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data: Array<Bucket> = await request.json();
-    data.sort((a, b) => {
-      return a.id - b.id;
-    });
-    setStock(data);
+      const request = await fetch(`http://localhost:9000/api/product-buckets`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data: Array<Bucket> = await request.json();
+      data.sort((a, b) => {
+        return a.id - b.id;
+      });
+      setStock(data);
 
-    document.getElementById(`brokenQuantity${bucket.id}`).style.color = 'red';
-    document.getElementById(`availableQuantity${bucket.id}`).style.color = '#17bf63';
-    setTimeout(() => {
-      document.getElementById(`brokenQuantity${bucket.id}`).style.color = 'black';
-      document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
-    }, 250);
+      document.getElementById(`brokenQuantity${bucket.id}`).style.color = 'red';
+      document.getElementById(`availableQuantity${bucket.id}`).style.color = '#17bf63';
+      setTimeout(() => {
+        document.getElementById(`brokenQuantity${bucket.id}`).style.color = 'black';
+        document.getElementById(`availableQuantity${bucket.id}`).style.color = 'black';
+      }, 250);
+    } else {
+      window.alert('No hay productos a reparar.');
+    }
   };
 
   return account && account.login && doneLoading ? (
