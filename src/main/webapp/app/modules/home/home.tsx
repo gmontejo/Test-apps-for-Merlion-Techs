@@ -254,7 +254,7 @@ export function Home(props: IHomeProp): JSX.Element {
                 <TableRow>
                   <TableCell>Nro de Venta</TableCell>
                   <TableCell align="right">ID del Producto</TableCell>
-                  <TableCell align="right">Producto</TableCell>
+                  <TableCell align="right">Nombre del Producto</TableCell>
                   <TableCell align="right">
                     <i className="fas fa-shipping-fast"></i>
                   </TableCell>
