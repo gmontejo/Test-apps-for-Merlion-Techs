@@ -2,8 +2,9 @@
 // Import Bootstrap source files from node_modules
 @import 'node_modules/bootstrap/scss/bootstrap';
 body {
-  background: #fafafa;
+  background: #fff;
   margin: 0;
+  overflow-x: 'hidden';
 }
 
 a {
@@ -28,7 +29,6 @@ a {
     height: calc(100% - 40px);
     overflow-y: auto;
     overflow-x: hidden;
-    padding: 1rem;
     .card {
       padding: 1rem;
     }

@@ -4,26 +4,52 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { Row, Col, Alert } from 'reactstrap';
 import { IRootState } from 'app/shared/reducers';
+import { Box, Button, makeStyles, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@material-ui/core';
 
-import {
-  Box,
-  Container,
-  Button,
-  makeStyles,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@material-ui/core';
+interface Sale {
+  id: number;
+  product: {
+    id: number;
+    name: string;
+  };
+  state: string;
+}
 
 const useStyles = makeStyles({
   table: {
-    minWidth: 650,
+    minWidth: 400,
+  },
+  landing: {
+    background: 'linear-gradient(#2a6a9e 10%, #fff 95%)',
+    textAlign: 'center',
+    padding: '40px 0 140px 0',
+  },
+  home: {
+    background: 'linear-gradient(#fff 10%, #2a6a9e 95%)',
+    minHeight: 'calc(100vh - 60px)',
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  fixedImg: {
+    position: 'fixed',
+    top: '100px',
+    opacity: '0.3',
   },
   saleStateButton: {
+    color: '#fff',
+    backgroundColor: '#2a6a9e',
+    borderRadius: '20px',
+    borderStyle: 'none',
+    '&:hover': {
+      backgroundColor: '#a3c3db',
+    },
+    '&:focus': {
+      backgroundColor: '#a3c3db',
+      outline: 'none',
+      boxShadow: '0 0 10px 2px #004f85',
+    },
+  },
+  handlersButton: {
     color: '#fff',
     backgroundColor: '#2a6a9e',
     borderRadius: '20px',
@@ -43,9 +69,8 @@ export type IHomeProp = StateProps;
 export function Home(props: IHomeProp): JSX.Element {
   const { account } = props;
   const [doneLoading, setDoneLoading] = useState<boolean>(false);
-  const [sales, setSales] = useState<Array<object>>();
-  const [salesConditionToShow, setSalesConditionToShow] = useState<Array<object>>();
-  const [salesUpdate, setSalesUpdate] = useState<boolean>(true);
+  const [sales, setSales] = useState<Array<Sale>>();
+  const [salesConditionToShow, setSalesConditionToShow] = useState<Array<Sale>>();
   const [token, setToken] = useState<string>('');
 
   useEffect(() => {
@@ -63,14 +88,15 @@ export function Home(props: IHomeProp): JSX.Element {
           Authorization: `Bearer ${idToken}`,
         },
       });
-      const data: Array<object> = await getSales.json();
+      const data: Array<Sale> = await getSales.json();
+      data.sort((a, b) => {
+        return a.id - b.id;
+      });
       setSales(data);
-      const salesInCharge: Array<object> = data.filter(sale => sale['state'] === 'IN_CHARGE');
+      const salesInCharge: Array<Sale> = data.filter((sale: Sale) => sale.state === 'IN_CHARGE');
+
       setSalesConditionToShow(salesInCharge);
 
-      global.console.log(account);
-
-      global.console.log(data);
       setDoneLoading(true);
     }
 
@@ -78,7 +104,7 @@ export function Home(props: IHomeProp): JSX.Element {
   }, []);
 
   const handleInChargeButton = (): void => {
-    const salesInCharge: Array<object> = sales.filter(sale => sale['state'] === 'IN_CHARGE');
+    const salesInCharge: Array<Sale> = sales.filter((sale: Sale) => sale.state === 'IN_CHARGE');
     setSalesConditionToShow(salesInCharge);
     //  declare type "any" to get rid of error message about symbol.iterator
     const saleStateBtns: any = document.getElementsByClassName('stateBtn');
@@ -91,7 +117,7 @@ export function Home(props: IHomeProp): JSX.Element {
   };
 
   const handleShippedButton = (): void => {
-    const salesShipped: Array<object> = sales.filter(sale => sale['state'] === 'SHIPPED');
+    const salesShipped: Array<Sale> = sales.filter(sale => sale.state === 'SHIPPED');
     setSalesConditionToShow(salesShipped);
     //  declare type "any" to get rid of error message about symbol.iterator
     const saleStateBtns: any = document.getElementsByClassName('stateBtn');
@@ -103,7 +129,7 @@ export function Home(props: IHomeProp): JSX.Element {
     document.getElementById('showShippedBtn').style.boxShadow = '0 0 10px 2px #004f85';
   };
   const handleDeliveredButton = (): void => {
-    const salesDelivered: Array<object> = sales.filter(sale => sale['state'] === 'DELIVERED');
+    const salesDelivered: Array<Sale> = sales.filter(sale => sale.state === 'DELIVERED');
     setSalesConditionToShow(salesDelivered);
     //  declare type "any" to get rid of error message about symbol.iterator
     const saleStateBtns: any = document.getElementsByClassName('stateBtn');
@@ -115,12 +141,12 @@ export function Home(props: IHomeProp): JSX.Element {
     document.getElementById('showDeliveredBtn').style.boxShadow = '0 0 10px 2px #004f85';
   };
 
-  const handleSendButton = async (sale: object): Promise<void> => {
-    const saleToUpdate: object = {
-      id: sale['id'],
+  const handleSendButton = async (sale: Sale): Promise<void> => {
+    const saleToUpdate: Sale = {
+      id: sale.id,
       product: {
-        id: sale['product']['id'],
-        name: sale['product']['name'],
+        id: sale.product.id,
+        name: sale.product.name,
       },
       state: 'SHIPPED',
     };
@@ -144,18 +170,21 @@ export function Home(props: IHomeProp): JSX.Element {
         },
       }
     );
-    const data: Array<object> = await getUpdatedSales.json();
+    const data: Array<Sale> = await getUpdatedSales.json();
+    data.sort((a, b) => {
+      return a.id - b.id;
+    });
     setSales(data);
-    const salesInCharge: Array<object> = data.filter(saleUpdate => saleUpdate['state'] === 'IN_CHARGE');
+    const salesInCharge: Array<Sale> = data.filter(saleUpdate => saleUpdate.state === 'IN_CHARGE');
     setSalesConditionToShow(salesInCharge);
   };
 
-  const handleReceivedButton = async (sale: object): Promise<void> => {
-    const saleToUpdate: object = {
-      id: sale['id'],
+  const handleReceivedButton = async (sale: Sale): Promise<void> => {
+    const saleToUpdate: Sale = {
+      id: sale.id,
       product: {
-        id: sale['product']['id'],
-        name: sale['product']['name'],
+        id: sale.product.id,
+        name: sale.product.name,
       },
       state: 'DELIVERED',
     };
@@ -180,94 +209,92 @@ export function Home(props: IHomeProp): JSX.Element {
         },
       }
     );
-    const data: Array<object> = await getUpdatedSales.json();
+    const data: Array<Sale> = await getUpdatedSales.json();
+    data.sort((a, b) => {
+      return a.id - b.id;
+    });
     setSales(data);
-    const salesInCharge: Array<object> = data.filter(saleUpdate => saleUpdate['state'] === 'SHIPPED');
+    const salesInCharge: Array<Sale> = data.filter(saleUpdate => saleUpdate.state === 'SHIPPED');
     setSalesConditionToShow(salesInCharge);
   };
 
   const classes = useStyles();
 
-  return (
-    <Row className="justify-content-center">
+  return account && account.login && doneLoading ? (
+    <Row className={classes.home}>
+      <img className={classes.fixedImg} src="../../content/images/logo-full-merliontechs.png" alt="Merlion Techs logo" />
       <Col md="9">
-        {account && account.login && doneLoading ? (
-          <div>
-            <Box display="flex" m={2} justifyContent="space-around">
-              <Button
-                id="showInChargeBtn"
-                className={`${classes.saleStateButton} stateBtn`}
-                variant="outlined"
-                onClick={handleInChargeButton}
-                style={{ backgroundColor: '#a3c3db', boxShadow: '0 0 10px 2px #004f85' }}
-              >
-                Encargado
-              </Button>
-              <Button
-                id="showShippedBtn"
-                className={`${classes.saleStateButton} stateBtn`}
-                variant="outlined"
-                onClick={handleShippedButton}
-              >
-                Enviado
-              </Button>
-              <Button
-                id="showDeliveredBtn"
-                className={`${classes.saleStateButton} stateBtn`}
-                variant="outlined"
-                onClick={handleDeliveredButton}
-              >
-                Entregado
-              </Button>
-            </Box>
+        <div>
+          <Box display="flex" m={2} justifyContent="space-around">
+            <Button
+              id="showInChargeBtn"
+              className={`${classes.saleStateButton} stateBtn`}
+              variant="outlined"
+              onClick={handleInChargeButton}
+              style={{ backgroundColor: '#a3c3db', boxShadow: '0 0 10px 2px #004f85' }}
+            >
+              Encargado
+            </Button>
+            <Button id="showShippedBtn" className={`${classes.saleStateButton} stateBtn`} variant="outlined" onClick={handleShippedButton}>
+              En Camino
+            </Button>
+            <Button
+              id="showDeliveredBtn"
+              className={`${classes.saleStateButton} stateBtn`}
+              variant="outlined"
+              onClick={handleDeliveredButton}
+            >
+              Entregado
+            </Button>
+          </Box>
 
-            <TableContainer component={Paper}>
-              <Table className={classes.table} aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Nro de Venta</TableCell>
-                    <TableCell align="right">ID del Producto</TableCell>
-                    <TableCell align="right">Producto</TableCell>
-                    <TableCell align="right">
-                      <i className="fas fa-shipping-fast"></i>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Nro de Venta</TableCell>
+                  <TableCell align="right">ID del Producto</TableCell>
+                  <TableCell align="right">Producto</TableCell>
+                  <TableCell align="right">
+                    <i className="fas fa-shipping-fast"></i>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {salesConditionToShow.map((sale: Sale) => (
+                  <TableRow key={sale.id}>
+                    <TableCell component="th" scope="row">
+                      {sale.id}
                     </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {salesConditionToShow.map(sale => (
-                    <TableRow key={sale['id']}>
-                      <TableCell component="th" scope="row">
-                        {sale['id']}
+                    <TableCell align="right">{sale.product.id}</TableCell>
+                    <TableCell align="right">{sale.product.name}</TableCell>
+                    {sale.state === 'DELIVERED' ? null : (
+                      <TableCell align="right">
+                        <Button
+                          className={classes.handlersButton}
+                          variant="outlined"
+                          onClick={sale.state === 'IN_CHARGE' ? () => handleSendButton(sale) : () => handleReceivedButton(sale)}
+                        >
+                          {sale.state === 'IN_CHARGE' ? 'Enviar' : 'Recibido'}
+                        </Button>
                       </TableCell>
-                      <TableCell align="right">{sale['product']['id']}</TableCell>
-                      <TableCell align="right">{sale['product']['name']}</TableCell>
-                      {sale['state'] === 'DELIVERED' ? null : (
-                        <TableCell align="right">
-                          <Button
-                            variant="outlined"
-                            onClick={sale['state'] === 'IN_CHARGE' ? () => handleSendButton(sale) : () => handleReceivedButton(sale)}
-                          >
-                            {sale['state'] === 'IN_CHARGE' ? 'Enviar' : 'Recibido'}
-                          </Button>
-                        </TableCell>
-                      )}
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </div>
-        ) : (
-          <div className="text-center">
-            <img className="loading-logo" src="../../content/images/logo-merliontechs.png" alt="logo-merliontechs" />
-            <h1>Bienvenido al Test de Producto de MerlionTechs</h1>
-            <div className="text-center">
-              <h4>Por favor inicie sesión con las credenciales de administrador</h4>
-            </div>
-          </div>
-        )}
+                    )}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </div>
       </Col>
     </Row>
+  ) : (
+    <div className={classes.landing}>
+      <img className="loading-logo" src="../../content/images/logo-merliontechs.png" alt="logo-merliontechs" />
+      <h1>Bienvenido al Test de Producto de MerlionTechs</h1>
+      <div>
+        <h4>Por favor inicie sesión con las credenciales de administrador</h4>
+      </div>
+    </div>
   );
 }
 
